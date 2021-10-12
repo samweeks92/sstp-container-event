@@ -351,11 +351,15 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 ```
 #### Add logging role to Cloud Build Service Account
 ```
-gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com   --role roles/logging.admin
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+--member serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com   \
+--role roles/logging.admin
 ```
 #### Add editor role to Default Compute Engine Service Account
 ```
-gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com   --role roles/editor
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+--member serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com   \
+--role roles/editor
 ```
 ### Build Container for BinAuth steps in CloudBuild:
 We need this container to add the attestation step in our final  cloud build pipeline.
