@@ -1,0 +1,50 @@
+steps:
+- name: "gcr.io/cloud-builders/git"
+  entrypoint: bash
+  args:
+  - '-c'
+  - |
+        SHORT_SHA=$(git rev-parse --short HEAD) 
+- name: "ubuntu"
+  entrypoint: bash
+  args:
+  - '-c'
+  - |
+        sed -i 's/123/'"${SHORT_SHA}"'/g' k8s-pod.yaml  
+        sed -i 's/COMMIT_ID/'"${SHORT_SHA}"'/g' index.html 
+        cat k8s-pod.yaml
+
+# build the container image
+- name: "gcr.io/cloud-builders/docker"
+  args: ["build", "-t", "europe-west2-docker.pkg.dev/argolis-test-1/source-to-prod-demo/nginx:${SHORT_SHA}", "."]
+# push container image
+- name: "gcr.io/cloud-builders/docker"
+  args: ["push", "europe-west2-docker.pkg.dev/argolis-test-1/source-to-prod-demo/nginx:${SHORT_SHA}"]
+# Get image digest for attesting
+- name: "gcr.io/cloud-builders/gke-deploy"
+  entrypoint: bash  
+  args:
+  - '-c'
+  - |
+       gke-deploy prepare --filename k8s-pod.yaml --image europe-west2-docker.pkg.dev/argolis-test-1/source-to-prod-demo/nginx:${SHORT_SHA} --version ${SHORT_SHA}
+       cp output/expanded/aggregated-resources.yaml k8s-pod.yaml
+
+# attest container
+- name: "europe-west2-docker.pkg.dev/$PROJECT_ID/source-to-prod-demo/binauthz-attestation:latest"
+  args:
+  - '--artifact-url'
+  - 'europe-west2-docker.pkg.dev/argolis-test-1/source-to-prod-demo/nginx:${SHORT_SHA}'
+  - '--attestor'
+  - 'projects/argolis-test-1/attestors/clouddeploy_demo'
+  - '--keyversion'
+  - 'projects/argolis-test-1/locations/global/keyRings/my-binauthz-keyring/cryptoKeys/my-binauthz-key/cryptoKeyVersions/1' 
+ 
+  # deploy container image to GKE
+- name: "gcr.io/cloud-builders/gcloud"
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+       gcloud beta deploy apply --file clouddeploy.yaml --region=us-central1 --project=argolis-test-1
+       gcloud beta deploy releases create nginx-release-${SHORT_SHA} --project=argolis-test-1 --region=us-central1 --delivery-pipeline=my-nginx-app-1
+
