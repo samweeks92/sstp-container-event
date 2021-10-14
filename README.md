@@ -14,7 +14,7 @@ Note: This only works on a public repo
 This will be the main working directory for this build out.
 ```
 Create a new public repo on github/other code repo.
-git clone https://github.com/johnsw87/cloud-deploy-basic-demo && cd cloud-deploy-basic-demo
+git clone https://github.com/untitledteamuk/cloud-deploy-basic-demo && cd cloud-deploy-basic-demo
 git push https://new-repo.git
 remove the old repo: cd .. && rm -rf cloud-deploy-basic-demo
 git clone https://new-repo.git && cd cloud-deploy-basic-demo
@@ -32,7 +32,7 @@ cloudkms.googleapis.com \
 binaryauthorization.googleapis.com
 ```
 ## Create the GKE Clusters:
-### Variables:
+### Variables and Default VPC:
 * REGION=us-central1
 * PROJECT_NAME=your project name here
 * PROJECT_ID=$PROJECT_NAME
