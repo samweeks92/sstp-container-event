@@ -7,6 +7,8 @@ serialPipeline:
  stages:
  - targetId: qsdev
    profiles: []
+ - targetId: qspreprod
+   profiles: []
  - targetId: qsprod
    profiles: []
 ---
@@ -18,6 +20,16 @@ metadata:
 description: development cluster
 gke:
  cluster: projects/argolis-test-1/locations/europe-west2/clusters/quickstart-cluster-qsdev
+---
+
+apiVersion: deploy.cloud.google.com/v1beta1
+kind: Target
+metadata:
+ name: qspreprod
+description: pre production cluster
+requireApproval: true
+gke:
+ cluster: projects/argolis-test-1/locations/europe-west2/clusters/quickstart-cluster-qspreprod
 ---
 
 apiVersion: deploy.cloud.google.com/v1beta1
