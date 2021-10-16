@@ -39,11 +39,13 @@ binaryauthorization.googleapis.com
 * PROJECT_NUMBER="$(gcloud projects describe "${PROJECT_ID}" --format="value(projectNumber)")"
 * PROD_CLUSTER=quickstart-cluster-qsprod
 * DEV_CLUSTER=quickstart-cluster-qsdev
+* PREPROD_CLUSTER=quickstart-cluster-qspreprod
 * REPO_NAME=source-to-prod-demo
 
 ```
 gcloud compute networks create default //optional if you have the default vpc
 gcloud container clusters create $DEV_CLUSTER --project=$PROJECT_NAME --region=$REGION --enable-binauthz
+gcloud container clusters create $PREPROD_CLUSTER --project=$PROJECT_NAME --region=$REGION --enable-binauthz
 gcloud container clusters create $PROD_CLUSTER --project=$PROJECT_NAME --region=$REGION --enable-binauthz
 ```
 ## Prepare Cloud Deploy:
@@ -128,6 +130,16 @@ description: development cluster
 gke:
  cluster: projects/$PROJECT_NAME/locations/$REGION/clusters/$DEV_CLUSTER
 ---
+
+apiVersion: deploy.cloud.google.com/v1beta1
+kind: Target
+metadata:
+ name: qspreprod
+description: pre production cluster
+requireApproval: true
+gke:
+ cluster: projects/$PROJECT_NAME/locations/$REGION/clusters/$PREPROD_CLUSTER
+ ---
 
 apiVersion: deploy.cloud.google.com/v1beta1
 kind: Target
@@ -305,6 +317,9 @@ globalPolicyEvaluationMode: ENABLE
 name: projects/$PROJECT_ID/policy
 
 gcloud container clusters get-credentials $DEV_CLUSTER --region $REGION --project $PROJECT_ID
+gcloud container binauthz policy import admissionpolicy.yaml
+
+gcloud container clusters get-credentials $PREPROD_CLUSTER --region $REGION --project $PROJECT_ID
 gcloud container binauthz policy import admissionpolicy.yaml
 
 gcloud container clusters get-credentials $PROD_CLUSTER --region $REGION --project $PROJECT_ID
