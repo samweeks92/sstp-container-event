@@ -120,6 +120,8 @@ serialPipeline:
    profiles: []
  - targetId: qsprod
    profiles: []
+ - targetId: qsprod
+   profiles: []
 ---
 
 apiVersion: deploy.cloud.google.com/v1beta1
