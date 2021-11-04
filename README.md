@@ -37,9 +37,9 @@ binaryauthorization.googleapis.com
 * PROJECT_NAME=your project name here
 * PROJECT_ID=$PROJECT_NAME
 * PROJECT_NUMBER="$(gcloud projects describe "${PROJECT_ID}" --format="value(projectNumber)")"
-* PROD_CLUSTER=quickstart-cluster-qsprod
-* DEV_CLUSTER=quickstart-cluster-qsdev
-* PREPROD_CLUSTER=quickstart-cluster-qspreprod
+* PROD_CLUSTER=prod-cluster-lon	
+* DEV_CLUSTER=dev-cluster
+* PREPROD_CLUSTER=preprod-cluster
 * REPO_NAME=source-to-prod-demo
 
 ```
