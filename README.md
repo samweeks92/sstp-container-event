@@ -33,14 +33,14 @@ binaryauthorization.googleapis.com
 ```
 ## Create the GKE Clusters:
 ### Variables and Default VPC:
-* REGION=us-central1
-* PROJECT_NAME=your project name here
-* PROJECT_ID=$PROJECT_NAME
-* PROJECT_NUMBER="$(gcloud projects describe "${PROJECT_ID}" --format="value(projectNumber)")"
-* PROD_CLUSTER=prod-cluster-lon	
-* DEV_CLUSTER=dev-cluster
-* PREPROD_CLUSTER=preprod-cluster
-* REPO_NAME=source-to-prod-demo
+* export REGION=us-central1
+* export PROJECT_NAME=your project name here
+* export PROJECT_ID=$PROJECT_NAME
+* export PROJECT_NUMBER="$(gcloud projects describe "${PROJECT_ID}" --format="value(projectNumber)")"
+* export PROD_CLUSTER=prod-cluster-lon	
+* export DEV_CLUSTER=dev-cluster
+* export PREPROD_CLUSTER=preprod-cluster
+* export REPO_NAME=source-to-prod-demo
 
 ```
 gcloud compute networks create default //optional if you have the default vpc
