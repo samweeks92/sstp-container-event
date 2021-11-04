@@ -41,6 +41,19 @@ binaryauthorization.googleapis.com
 * export DEV_CLUSTER=dev-cluster
 * export PREPROD_CLUSTER=preprod-cluster
 * export REPO_NAME=source-to-prod-demo
+* export KMS_KEY_PROJECT_ID=$PROJECT_ID
+* export KMS_KEYRING_NAME=my-binauthz-keyring
+* export KMS_KEY_NAME=my-binauthz-key
+* export KMS_KEY_LOCATION=global
+* export KMS_KEY_PURPOSE=asymmetric-signing
+* export KMS_KEY_ALGORITHM=ec-sign-p256-sha256
+* export KMS_PROTECTION_LEVEL=software
+* export KMS_KEY_VERSION=1
+* export DEPLOYER_PROJECT_ID=$PROJECT_ID
+* export DEPLOYER_PROJECT_NUMBER="$(gcloud projects describe "${DEPLOYER_PROJECT_ID}" --format="value(projectNumber)")"
+* export ATTESTOR_PROJECT_ID=$PROJECT_ID
+* export ATTESTOR_PROJECT_NUMBER="$(gcloud projects describe "${ATTESTOR_PROJECT_ID}" --format="value(projectNumber)")"
+* export ATTESTOR_NAME=clouddeploy_demo
 
 ```
 gcloud compute networks create default //optional if you have the default vpc
@@ -170,21 +183,6 @@ gcloud artifacts repositories create $REPO_NAME --repository-format=docker \
 We are going to be using Cloud build for build and push and the SA halready has permissions to access AR.
 
 ## BinAuth
-### Vars for this section
-* export KMS_KEY_PROJECT_ID=$PROJECT_ID
-* export KMS_KEYRING_NAME=my-binauthz-keyring
-* export KMS_KEY_NAME=my-binauthz-key
-* export KMS_KEY_LOCATION=global
-* export KMS_KEY_PURPOSE=asymmetric-signing
-* export KMS_KEY_ALGORITHM=ec-sign-p256-sha256
-* export KMS_PROTECTION_LEVEL=software
-* export KMS_KEY_VERSION=1
-* export DEPLOYER_PROJECT_ID=$PROJECT_ID
-* export DEPLOYER_PROJECT_NUMBER="$(gcloud projects describe "${DEPLOYER_PROJECT_ID}" --format="value(projectNumber)")"
-* export ATTESTOR_PROJECT_ID=$PROJECT_ID
-* export ATTESTOR_PROJECT_NUMBER="$(gcloud projects describe "${ATTESTOR_PROJECT_ID}" --format="value(projectNumber)")"
-* export ATTESTOR_NAME=clouddeploy_demo
-
 ### Setup KMS
 #### Create Keyring
 ```

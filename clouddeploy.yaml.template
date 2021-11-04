@@ -1,0 +1,42 @@
+apiVersion: deploy.cloud.google.com/v1beta1
+kind: DeliveryPipeline
+metadata:
+ name: my-nginx-app-1
+description: main application pipeline
+serialPipeline:
+ stages:
+ - targetId: qsdev
+   profiles: []
+ - targetId: qspreprod
+   profiles: []
+ - targetId: qsprod
+   profiles: []
+---
+
+apiVersion: deploy.cloud.google.com/v1beta1
+kind: Target
+metadata:
+ name: qsdev
+description: development cluster
+gke:
+ cluster: projects/$PROJECT_ID/locations/$REGION/clusters/$DEV_CLUSTER
+---
+
+apiVersion: deploy.cloud.google.com/v1beta1
+kind: Target
+metadata:
+ name: qspreprod
+description: pre production cluster
+requireApproval: true
+gke:
+ cluster: projects/$PROJECT_ID/locations/$REGION/clusters/$PREPROD_CLUSTER
+---
+
+apiVersion: deploy.cloud.google.com/v1beta1
+kind: Target
+metadata:
+ name: qsprod
+description: production cluster
+requireApproval: true
+gke:
+ cluster: projects/$PROJECT_ID/locations/$REGION/clusters/PROD_CLUSTER
