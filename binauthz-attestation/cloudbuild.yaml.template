@@ -4,17 +4,17 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'europe-west2-docker.pkg.dev/$PROJECT_ID/source-to-prod-demo/binauthz-attestation:latest'
+      - '$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/binauthz-attestation:latest'
       - '.'
   - id: 'publish'
     name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'europe-west2-docker.pkg.dev/$PROJECT_ID/source-to-prod-demo/binauthz-attestation:latest'
+      - '$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/binauthz-attestation:latest'
   - id: 'run'
     name: 'gcr.io/cloud-builders/docker'
     args:
       - 'run'
-      - 'europe-west2-docker.pkg.dev/$PROJECT_ID/source-to-prod-demo/binauthz-attestation:latest'
+      - '$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/binauthz-attestation:latest'
       - '--help'
 tags: ['cloud-builders-community']

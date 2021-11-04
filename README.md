@@ -107,7 +107,7 @@ spec:
 
 #### clouddeploy.yaml:
 ```
-cat clouddeploy.yaml 
+cat clouddeploy.yaml.template  | envsubst > clouddeploy.yaml
 
 apiVersion: deploy.cloud.google.com/v1beta1
 kind: DeliveryPipeline
@@ -171,19 +171,19 @@ We are going to be using Cloud build for build and push and the SA halready has 
 
 ## BinAuth
 ### Vars for this section
-* KMS_KEY_PROJECT_ID=$PROJECT_ID
-* KMS_KEYRING_NAME=my-binauthz-keyring
-* KMS_KEY_NAME=my-binauthz-key
-* KMS_KEY_LOCATION=global
-* KMS_KEY_PURPOSE=asymmetric-signing
-* KMS_KEY_ALGORITHM=ec-sign-p256-sha256
-* KMS_PROTECTION_LEVEL=software
-* KMS_KEY_VERSION=1
-* DEPLOYER_PROJECT_ID=$PROJECT_ID
-* DEPLOYER_PROJECT_NUMBER="$(gcloud projects describe "${DEPLOYER_PROJECT_ID}" --format="value(projectNumber)")"
-* ATTESTOR_PROJECT_ID=$PROJECT_ID
-* ATTESTOR_PROJECT_NUMBER="$(gcloud projects describe "${ATTESTOR_PROJECT_ID}" --format="value(projectNumber)")"
-* ATTESTOR_NAME=clouddeploy_demo
+* export KMS_KEY_PROJECT_ID=$PROJECT_ID
+* export KMS_KEYRING_NAME=my-binauthz-keyring
+* export KMS_KEY_NAME=my-binauthz-key
+* export KMS_KEY_LOCATION=global
+* export KMS_KEY_PURPOSE=asymmetric-signing
+* export KMS_KEY_ALGORITHM=ec-sign-p256-sha256
+* export KMS_PROTECTION_LEVEL=software
+* export KMS_KEY_VERSION=1
+* export DEPLOYER_PROJECT_ID=$PROJECT_ID
+* export DEPLOYER_PROJECT_NUMBER="$(gcloud projects describe "${DEPLOYER_PROJECT_ID}" --format="value(projectNumber)")"
+* export ATTESTOR_PROJECT_ID=$PROJECT_ID
+* export ATTESTOR_PROJECT_NUMBER="$(gcloud projects describe "${ATTESTOR_PROJECT_ID}" --format="value(projectNumber)")"
+* export ATTESTOR_NAME=clouddeploy_demo
 
 ### Setup KMS
 #### Create Keyring
@@ -302,7 +302,7 @@ gcloud container binauthz policy export > admissionpolicy.yaml
 ```
 #### edit admissionpolicy.yaml:
 ```
-vi admissionpolicy.yaml
+cat admissionpolicy.yaml.template | envsubst > admissionpolicy.yaml
 
 admissionWhitelistPatterns:
 - namePattern: gcr.io/google_containers/*
@@ -383,25 +383,25 @@ We need this container to add the attestation step in our final  cloud build pip
 ```
 cd binauthz-attestation
 
-cat cloudbuild.yaml 
+cat cloudbuild.yaml.template | envsubst > cloudbuild.yaml
 steps:
   - id: 'build'
     name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
       - '-t'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/binauthz-attestation:latest'
+      - '$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/binauthz-attestation:latest'
       - '.'
   - id: 'publish'
     name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/binauthz-attestation:latest'
+      - '$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/binauthz-attestation:latest'
   - id: 'run'
     name: 'gcr.io/cloud-builders/docker'
     args:
       - 'run'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/binauthz-attestation:latest'
+      - '$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/binauthz-attestation:latest'
       - '--help'
 tags: ['cloud-builders-community']
 
@@ -447,7 +447,7 @@ Commercial support is available at
 ```
 #### cloudbuild.yaml:
 ```
-cat cloudbuild.yaml
+cat cloudbuild.yaml.template | envsubst > cloudbuild.yaml
 steps:
 # Get the short Commit ID from github.
 - name: "gcr.io/cloud-builders/git"
@@ -468,24 +468,24 @@ steps:
 
 # build the container image
 - name: "gcr.io/cloud-builders/docker"
-  args: ["build", "-t", "us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:${SHORT_SHA}", "."]
+  args: ["build", "-t", "$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:${SHORT_SHA}", "."]
 # push container image
 - name: "gcr.io/cloud-builders/docker"
-  args: ["push", "us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:${SHORT_SHA}"]
+  args: ["push", "$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:${SHORT_SHA}"]
 # Get image digest for attesting BinAuth only works on image digest.
 - name: "gcr.io/cloud-builders/gke-deploy"
   entrypoint: bash  
   args:
   - '-c'
   - |
-       gke-deploy prepare --filename k8s-pod.yaml --image us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:${SHORT_SHA} --version ${SHORT_SHA}
+       gke-deploy prepare --filename k8s-pod.yaml --image $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:${SHORT_SHA} --version ${SHORT_SHA}
        cp output/expanded/aggregated-resources.yaml k8s-pod.yaml
 
 # attest the built container
-- name: "us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/binauthz-attestation:latest"
+- name: "$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/binauthz-attestation:latest"
   args:
   - '--artifact-url'
-  - 'us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:${SHORT_SHA}'
+  - '$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:${SHORT_SHA}'
   - '--attestor'
   - 'projects/$PROJECT_ID/attestors/$ATTESTOR_NAME'
   - '--keyversion'

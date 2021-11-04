@@ -1,0 +1,51 @@
+steps:
+# Get the short Commit ID from github.
+- name: "gcr.io/cloud-builders/git"
+  entrypoint: bash
+  args:
+  - '-c'
+  - |
+        SHORT_SHA=$(git rev-parse --short HEAD) 
+# Add the Commit ID to the Dockerfile and the static page.
+- name: "ubuntu"
+  entrypoint: bash
+  args:
+  - '-c'
+  - |
+        sed -i 's/123/'"${SHORT_SHA}"'/g' k8s-pod.yaml  
+        sed -i 's/COMMIT_ID/'"${SHORT_SHA}"'/g' index.html 
+        cat k8s-pod.yaml
+
+# build the container image
+- name: "gcr.io/cloud-builders/docker"
+  args: ["build", "-t", "$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:${SHORT_SHA}", "."]
+# push container image
+- name: "gcr.io/cloud-builders/docker"
+  args: ["push", "$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:${SHORT_SHA}"]
+# Get image digest for attesting BinAuth only works on image digest.
+- name: "gcr.io/cloud-builders/gke-deploy"
+  entrypoint: bash  
+  args:
+  - '-c'
+  - |
+       gke-deploy prepare --filename k8s-pod.yaml --image $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:${SHORT_SHA} --version ${SHORT_SHA}
+       cp output/expanded/aggregated-resources.yaml k8s-pod.yaml
+
+# attest the built container
+- name: "$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/binauthz-attestation:latest"
+  args:
+  - '--artifact-url'
+  - '$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:${SHORT_SHA}'
+  - '--attestor'
+  - 'projects/$PROJECT_ID/attestors/$ATTESTOR_NAME'
+  - '--keyversion'
+  - 'projects/$PROJECT_ID/locations/global/keyRings/$KMS_KEYRING_NAME/cryptoKeys/$KMS_KEY_NAME/cryptoKeyVersions/$KMS_KEY_VERSION' 
+ 
+  # deploy container image to GKE
+- name: "gcr.io/cloud-builders/gcloud"
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+       gcloud beta deploy apply --file clouddeploy.yaml --region=$REGION --project=$PROJECT_ID
+       gcloud beta deploy releases create nginx-release-${SHORT_SHA} --project=$PROJECT_ID --region=$REGION --delivery-pipeline=my-nginx-app-1
