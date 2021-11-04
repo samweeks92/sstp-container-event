@@ -33,8 +33,8 @@ binaryauthorization.googleapis.com
 ```
 ## Create the GKE Clusters:
 ### Variables and Default VPC:
-* export REGION=us-central1
 * export PROJECT_NAME=your project name here
+* export REGION=us-central1
 * export PROJECT_ID=$PROJECT_NAME
 * export PROJECT_NUMBER="$(gcloud projects describe "${PROJECT_ID}" --format="value(projectNumber)")"
 * export PROD_CLUSTER=prod-cluster-lon	
