@@ -69,7 +69,7 @@ deploy:
 
 #### k8s-pod.yaml:
 ```
-cat k8s-pod.yaml
+cat k8s-pod.yaml.template | envsubst k8s-pod.yaml
 
 apiVersion: v1
 kind: Pod
