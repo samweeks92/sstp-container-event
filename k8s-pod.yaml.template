@@ -8,7 +8,7 @@ metadata:
 spec:
   containers:
   - name: nginx
-    image: europe-west2-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/nginx:123
+    image: europe-west2-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/nginx:123
     imagePullPolicy: Always
     ports:
     - containerPort: 80
