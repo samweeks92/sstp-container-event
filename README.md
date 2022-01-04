@@ -37,7 +37,7 @@ binaryauthorization.googleapis.com
 * export REGION=us-central1
 * export PROJECT_ID=$PROJECT_NAME
 * export PROJECT_NUMBER="$(gcloud projects describe "${PROJECT_ID}" --format="value(projectNumber)")"
-* export PROD_CLUSTER=prod-cluster-lon	
+* export PROD_CLUSTER=prod-cluster	
 * export DEV_CLUSTER=dev-cluster
 * export PREPROD_CLUSTER=preprod-cluster
 * export REPO_NAME=source-to-prod-demo
