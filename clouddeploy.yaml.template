@@ -39,4 +39,4 @@ metadata:
 description: production cluster
 requireApproval: true
 gke:
- cluster: projects/$PROJECT_ID/locations/$REGION/clusters/PROD_CLUSTER
+ cluster: projects/$PROJECT_ID/locations/$REGION/clusters/$PROD_CLUSTER
