@@ -362,7 +362,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 ```
 gcloud projects add-iam-policy-binding $PROJECT_ID \
 --member serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com   \
---role roles/roles/container.admin
+--role roles/container.admin
 ```
 #### Add logging role to Cloud Build Service Account
 ```
