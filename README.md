@@ -54,6 +54,7 @@ binaryauthorization.googleapis.com
 * export ATTESTOR_PROJECT_ID=$PROJECT_ID
 * export ATTESTOR_PROJECT_NUMBER="$(gcloud projects describe "${ATTESTOR_PROJECT_ID}" --format="value(projectNumber)")"
 * export ATTESTOR_NAME=clouddeploy_demo
+* export SHORT_SHA=\${SHORT_SHA}
 
 ```
 gcloud compute networks create default //optional if you have the default vpc
