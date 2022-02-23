@@ -47,5 +47,5 @@ steps:
   args:
   - '-c'
   - |
-       gcloud beta deploy apply --file clouddeploy.yaml --region=europe-west2 --project=sam-sandbox-243911
-       gcloud beta deploy releases create nginx-release-${SHORT_SHA} --project=sam-sandbox-243911 --region=europe-west2 --delivery-pipeline=my-nginx-app-1
+       gcloud beta deploy apply --file clouddeploy.yaml --region=europe-west1 --project=sam-sandbox-243911
+       gcloud beta deploy releases create nginx-release-${SHORT_SHA} --project=sam-sandbox-243911 --region=europe-west1 --delivery-pipeline=my-nginx-app-1
