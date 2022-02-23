@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    department: engineering
+    app: nginx
+spec:
+  containers:
+  - name: nginx
+    image: europe-west2-docker.pkg.dev/sam-sandbox-243911/source-to-prod-demo/nginx:123
+    imagePullPolicy: Always
+    ports:
+    - containerPort: 80

@@ -1,0 +1,13 @@
+{
+  "resource": "projects/sam-sandbox-243911/notes/clouddeploy_note",
+  "policy": {
+    "bindings": [
+      {
+        "role": "roles/containeranalysis.notes.occurrences.viewer",
+        "members": [
+          "serviceAccount:service-739789884181@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
+        ]
+      }
+    ]
+  }
+}

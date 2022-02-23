@@ -1,0 +1,20 @@
+steps:
+  - id: 'build'
+    name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'europe-west2-docker.pkg.dev/sam-sandbox-243911/source-to-prod-demo/binauthz-attestation:latest'
+      - '.'
+  - id: 'publish'
+    name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'europe-west2-docker.pkg.dev/sam-sandbox-243911/source-to-prod-demo/binauthz-attestation:latest'
+  - id: 'run'
+    name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'run'
+      - 'europe-west2-docker.pkg.dev/sam-sandbox-243911/source-to-prod-demo/binauthz-attestation:latest'
+      - '--help'
+tags: ['cloud-builders-community']

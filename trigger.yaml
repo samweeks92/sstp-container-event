@@ -1,0 +1,8 @@
+description: triggers the build and deploy of the nginx demo container
+filename: cloudbuild.yaml
+name: cloud-build-nginx-trigger
+github:
+  owner: $GITHUB_USERNAME
+  name: $GITHUB_REPO
+  push:
+    branch: ^main$
